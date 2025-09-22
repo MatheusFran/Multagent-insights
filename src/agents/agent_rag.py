@@ -8,8 +8,9 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
 
+
 class RetrievalTool:
-    def __init__(self,path):
+    def __init__(self, path):
         self.path = path
         self.docs = []
 
@@ -48,7 +49,7 @@ class RetrievalTool:
         retriever_tool = create_retriever_tool(
             retriever,
             "retriever_pdf_docs",
-            "Search and return information about Lilian Weng blog posts.",
+            "Pesquisa e retorna informação dos documentos jurídicos e compliance da empresa",
         )
         return retriever_tool
 
@@ -57,19 +58,19 @@ class RetrievalTool:
         self._create_retriever()
 
 
-def create_rag_agent(pdf_path,model):
+def create_rag_agent(pdf_path, model):
     retriever_tool = RetrievalTool(pdf_path)
 
     agent_rag = create_react_agent(
         model=model,
         tools=[retriever_tool],
         prompt=(
-            "You are a RAG agent for document compliance analysis.\n\n"
-            "INSTRUCTIONS:\n"
-            "- Use the retrieve_pdf_documents tool to search for relevant information\n"
-            "- Provide accurate answers based on the retrieved documents\n"
-            "- If you can't find relevant information, say so clearly\n"
-            "- Cite the source document when possible"
+            "Você é um agente do RAG para análise de conformidade de documentos.\n\n"
+            "INSTRUÇÕES:\n"
+            "- Use a ferramenta retriever_pdf_docs para buscar informações relevantes\n"
+            "- Forneça respostas precisas com base nos documentos recuperados\n"
+            "- Se não encontrar informações relevantes, diga isso claramente\n"
+            "- Cite o documento de origem sempre que possível"
         ),
         name="rag_agent",
     )

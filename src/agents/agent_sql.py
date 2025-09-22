@@ -3,9 +3,10 @@ from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langgraph.prebuilt import create_react_agent
 
+load_dotenv()
 
-def create_sql_agent(db_uri="sqlite:///Chinook.db",model):
 
+def create_sql_agent(db_uri, model):
     db = SQLDatabase.from_uri(db_uri)
 
     toolkit = SQLDatabaseToolkit(db=db, llm=model)
@@ -15,26 +16,26 @@ def create_sql_agent(db_uri="sqlite:///Chinook.db",model):
         print(f"{tool.name}: {tool.description}\n")
 
     prompt = f"""
-    You are an agent designed to interact with a SQL database.
-    Given an input question, create a syntactically correct {db.dialect} query to run,
-    then look at the results of the query and return the answer. Unless the user
-    specifies a specific number of examples they wish to obtain, always limit your
-    query to at most 5 results.
+    Você é um agente projetado para interagir com um banco de dados SQL.
+    Dada uma pergunta de entrada, crie uma consulta {db.dialect} sintaticamente correta para ser executada,
+    em seguida, observe os resultados da consulta e retorne a resposta. A menos que o usuário
+    especifique um número específico de exemplos que deseja obter, sempre limite sua
+    consulta a, no máximo, 5 resultados.
 
-    You can order the results by a relevant column to return the most interesting
-    examples in the database. Never query for all the columns from a specific table,
-    only ask for the relevant columns given the question.
+    Você pode ordenar os resultados por uma coluna relevante para retornar os exemplos
+    mais interessantes no banco de dados. Nunca consulte todas as colunas de uma tabela específica,
+    solicite apenas as colunas relevantes para a pergunta.
 
-    You MUST double check your query before executing it. If you get an error while
-    executing a query, rewrite the query and try again.
+    Você DEVE verificar sua consulta duas vezes antes de executá-la. Se ocorrer um erro ao
+    executar uma consulta, reescreva-a e tente novamente.
 
-    DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the
-    database.
+    NÃO crie nenhuma instrução DML (INSERT, UPDATE, DELETE, DROP etc.) no
+    banco de dados.
 
-    To start you should ALWAYS look at the tables in the database to see what you
-    can query. Do NOT skip this step.
+    Para começar, você deve SEMPRE consultar as tabelas no banco de dados para ver o que
+    pode consultar. NÃO pule esta etapa.
 
-    Then you should query the schema of the most relevant tables.
+    Em seguida, você deve consultar o esquema das tabelas mais relevantes.
     """
 
     agent = create_react_agent(
